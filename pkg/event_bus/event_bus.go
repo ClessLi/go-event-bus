@@ -1,12 +1,14 @@
 package event_bus
 
 import (
+	"github.com/ClessLi/go-annotation/pkg/v2/annotation"
 	"github.com/ClessLi/go-event-bus/pkg/executor"
 	"github.com/ClessLi/go-event-bus/pkg/observer"
 )
 
 type EventBus interface {
 	Register(object interface{})
+	RegisterProxy(proxy annotation.AnnotatedMethodProxy)
 	//Unregister(object interface{})
 	Post(event ...interface{})
 	annotationGenerate()
@@ -42,6 +44,10 @@ type eventBusImp struct {
 
 func (e *eventBusImp) Register(object interface{}) {
 	e.registry.Register(object)
+}
+
+func (e *eventBusImp) RegisterProxy(proxy annotation.AnnotatedMethodProxy) {
+	e.registry.RegisterProxy(proxy)
 }
 
 //func (e *eventBusImp) Unregister(object interface{}) {

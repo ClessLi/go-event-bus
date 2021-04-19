@@ -9,6 +9,7 @@ import (
 
 type Registry interface {
 	Register(object interface{})
+	RegisterProxy(proxy annotation.AnnotatedMethodProxy)
 	GetMatchedObserverActions(event ...interface{}) []Action
 	findAllObserverActions(observer interface{}) map[string][]Action
 	getAnnotatedMethods(object interface{}) (methods []reflect.Method)
@@ -43,6 +44,13 @@ func (r *registry) Register(object interface{}) {
 		}
 		registeredEventActions = append(registeredEventActions, eventActions...)
 		r.registryMap[eventType] = registeredEventActions
+	}
+}
+
+func (r *registry) RegisterProxy(proxy annotation.AnnotatedMethodProxy) {
+	err := r.annotation.RegisterAnnotatedObjectProxy(proxy)
+	if err != nil {
+		fmt.Println(err)
 	}
 }
 
