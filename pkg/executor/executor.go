@@ -1,7 +1,6 @@
 package executor
 
 import (
-	"fmt"
 	"github.com/ClessLi/go-event-bus/pkg/observer"
 	"github.com/panjf2000/ants/v2"
 	"sync"
@@ -48,27 +47,15 @@ func NewAsyncExecutor(poolCap uint) AsyncExecutor {
 }
 
 func (a *asyncExecutor) Execute(action observer.Action, event ...interface{}) {
-	//a.waitGroup.Add(1)
-	//go func() {
-	//	action.Execute(event...)
-	//	a.waitGroup.Done()
-	//}()
 	a.locker.Lock()
 	defer a.locker.Unlock()
-	for a.pool.Free() <= 0 {
-		//time.Sleep(time.Millisecond)
-	}
-	err := a.pool.Submit(func() {
+	a.waitGroup.Add(1)
+	_ = a.pool.Submit(func() {
 		action.Execute(event...)
+		a.waitGroup.Done()
 	})
-	if err != nil {
-		fmt.Println("AsyncExecutor.Execute error,", err)
-	}
 }
 
 func (a *asyncExecutor) Wait() {
-	//a.waitGroup.Wait()
-	for a.pool.Running() > 0 {
-		//time.Sleep(time.Millisecond)
-	}
+	a.waitGroup.Wait()
 }

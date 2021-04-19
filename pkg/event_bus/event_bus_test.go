@@ -3,6 +3,7 @@ package event_bus
 import (
 	"fmt"
 	"testing"
+	"time"
 )
 
 type xMsg string
@@ -34,6 +35,7 @@ type TestObserverB struct {
 
 //@EventBus
 func (t *TestObserverB) Fa(msg xMsg) {
+	time.Sleep(time.Second)
 	fmt.Println("B.Fa()", msg)
 }
 
@@ -67,7 +69,7 @@ func TestNewEventBus(t *testing.T) {
 
 func TestNewAsyncEventBus(t *testing.T) {
 	var waitFn func()
-	eb := NewAsyncEventBus(200, &waitFn)
+	eb := NewAsyncEventBus(20, &waitFn)
 	eb.Register(new(TestObserverA))
 	eb.Register(new(TestObserverB))
 	//fmt.Println(reflect.TypeOf(interface{}(msg1)).Name())
